@@ -53,7 +53,7 @@ steps:
     displayName: 'build docker image'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
-  - script: docker push roymoran/mailer:build
+  - script: docker push roymoran/pub-mailer:build
     displayName: 'push docker image'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
   
