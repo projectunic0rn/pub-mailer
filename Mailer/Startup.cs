@@ -53,9 +53,11 @@ namespace Mailer
 
             if (AppSettings.ServiceBusConnectionString == null
             || AppSettings.ServiceBusQueueName == null
-            || AppSettings.EmailConfiguration == null)
+            || emailConfiguration.SmtpServer == null
+            || emailConfiguration.SmtpUsername == null
+            || emailConfiguration.SmtpPassword == null)
             {
-                throw new Exception("Application missing startup variables.");
+                throw new Exception("Application missing startup variable(s).");
             }
 
             _logger.LogInformation("Initialized App Settings");

@@ -16,6 +16,10 @@ variables:
   buildConfiguration: 'Release'
   busConnectionString: $(ServiceBusConnectionString)
   queueName: $(ServiceBusQueueName)
+  smptServerAddress: $(SmtpServer)
+  mailPort: $(SmtpPort)
+  mailUsername: $(SmtpUsername)
+  mailPassword: $(SmtpPassword)
   
 steps:
   - task: CopyFiles@2
@@ -49,7 +53,7 @@ steps:
       command: login
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
   
-  - script: docker build --build-arg SERVICE_BUS_CONNECTION_STRING="$(busConnectionString)" --build-arg SERVICE_BUS_QUEUE_NAME="$(queueName)" -t roymoran/pub-mailer:build -f ci/Dockerfile .
+  - script: docker build --build-arg SMTP_SERVER="$(smptServerAddress)" --build-arg SMTP_PORT="$(mailPort)" --build-arg SMTP_USERNAME="$(mailUsername)" --build-arg SMTP_PASSWORD="$(mailPassword)" --build-arg SERVICE_BUS_CONNECTION_STRING="$(busConnectionString)" --build-arg SERVICE_BUS_QUEUE_NAME="$(queueName)" -t roymoran/pub-mailer:build -f ci/Dockerfile .
     displayName: 'build docker image'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
