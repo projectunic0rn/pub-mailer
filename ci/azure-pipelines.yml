@@ -55,10 +55,10 @@ steps:
   
   - script: docker build --build-arg SMTP_SERVER="$(smptServerAddress)" --build-arg SMTP_PORT="$(mailPort)" --build-arg SMTP_USERNAME="$(mailUsername)" --build-arg SMTP_PASSWORD="$(mailPassword)" --build-arg SERVICE_BUS_CONNECTION_STRING="$(busConnectionString)" --build-arg SERVICE_BUS_QUEUE_NAME="$(queueName)" -t roymoran/pub-mailer:build -f ci/Dockerfile .
     displayName: 'build docker image'
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
   - script: docker push roymoran/pub-mailer:build
     displayName: 'push docker image'
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
+    condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
   
   
