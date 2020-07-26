@@ -14,28 +14,8 @@ pool:
 
 variables:
   buildConfiguration: 'Release'
-  busConnectionString: $(ServiceBusConnectionString)
-  queueName: $(ServiceBusQueueName)
-  smptServerAddress: $(SmtpServer)
-  mailPort: $(SmtpPort)
-  mailUsername: $(SmtpUsername)
-  mailPassword: $(SmtpPassword)
   
 steps:
-  - task: CopyFiles@2
-    displayName: 'Copy Files to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      contents: '**/*'
-      targetFolder: $(Build.ArtifactStagingDirectory)
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
-  
-  - task: PublishBuildArtifacts@1
-    displayName: 'Publish src to: $(Build.ArtifactStagingDirectory)'
-    inputs:
-      pathtoPublish: '$(Build.ArtifactStagingDirectory)' 
-      artifactName: 'deploy' 
-    condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
-  
   - script: dotnet restore
     displayName: 'dotnet restore'
   
@@ -53,11 +33,11 @@ steps:
       command: login
     condition: and(succeeded(), or(eq(variables['Build.SourceBranch'], 'refs/heads/master'),contains(variables['Build.SourceBranch'], 'refs/tags/v')))
   
-  - script: docker build --build-arg SMTP_SERVER="$(smptServerAddress)" --build-arg SMTP_PORT="$(mailPort)" --build-arg SMTP_USERNAME="$(mailUsername)" --build-arg SMTP_PASSWORD="$(mailPassword)" --build-arg SERVICE_BUS_CONNECTION_STRING="$(busConnectionString)" --build-arg SERVICE_BUS_QUEUE_NAME="$(queueName)" -t roymoran/pub-mailer:build -f ci/Dockerfile .
+  - script: docker build -t roymoran/pub-mailer -f ci/Dockerfile .
     displayName: 'build docker image'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
     
-  - script: docker push roymoran/pub-mailer:build
+  - script: docker push roymoran/pub-mailer
     displayName: 'push docker image'
     condition: and(succeeded(), eq(variables['Build.SourceBranch'], 'refs/heads/master'))  
   
